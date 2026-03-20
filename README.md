@@ -6,7 +6,7 @@
 
 <p align="center">
   PIT-38 tax calculator for <strong>Interactive Brokers</strong> users in Poland.<br>
-  Upload your IB Activity Statement CSV and get exact PIT-38 field values in seconds.
+  Upload your IB Activity Statement XML and get exact PIT-38 field values in seconds.
 </p>
 
 <p align="center">
