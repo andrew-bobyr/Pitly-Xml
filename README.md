@@ -10,10 +10,6 @@
 </p>
 
 <p align="center">
-  <a href="https://pitly.xyz"><strong>pitly.xyz</strong></a>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet" alt=".NET 10">
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React 19">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License">
@@ -31,7 +27,7 @@ If you invest through **Interactive Brokers** from Poland, every year by **April
 
 ## Features
 
-- **One-click CSV import** — drag & drop your IB Activity Statement, the app handles the rest
+- **One-click XML import** — drag & drop your IB Activity Statement, the app handles the rest
 - **Automatic PLN conversion** — fetches official [NBP mid exchange rates](https://api.nbp.pl/) for every transaction date (last business day before, per Polish tax law)
 - **FIFO capital gains calculation** — buy lots are queued per symbol, sells dequeue first-in-first-out to compute cost basis in PLN
 - **Dividend tax with foreign credit** — calculates Polish 19% tax and offsets US withholding (typically 15% under the PL-US treaty)
@@ -100,7 +96,7 @@ npm install && npm run dev
 2. Go to **Performance & Reports > Statements**
 3. Click **Activity** statement
 4. Set the period to the full tax year (e.g. January 1 – December 31, 2024)
-5. Select format: **CSV**
+5. Select format: **XML**
 6. Upload the downloaded file in the app
 
 A sample statement is provided at [`samples/sample-activity-statement.csv`](samples/sample-activity-statement.csv) for testing.
