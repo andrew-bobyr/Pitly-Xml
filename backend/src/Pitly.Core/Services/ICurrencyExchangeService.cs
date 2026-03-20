@@ -1,6 +1,6 @@
 namespace Pitly.Core.Services;
 
-public interface INbpExchangeRateService
+public interface ICurrencyExchangeService
 {
     Task<decimal> GetRateAsync(string currency, DateTime transactionDate);
 }

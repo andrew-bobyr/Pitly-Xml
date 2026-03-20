@@ -8,26 +8,27 @@ namespace Pitly.Api.Services;
 
 public class ImportService : IImportService
 {
-    private readonly IStatementParser _parser;
+    private readonly IStatementParserFactory _parserFactory;
     private readonly ITaxCalculator _calculator;
     private readonly AppDbContext _db;
     private readonly ILogger<ImportService> _logger;
 
-    public ImportService(IStatementParser parser, ITaxCalculator calculator, AppDbContext db, ILogger<ImportService> logger)
+    public ImportService(IStatementParserFactory parserFactory, ITaxCalculator calculator, AppDbContext db, ILogger<ImportService> logger)
     {
-        _parser = parser;
+        _parserFactory = parserFactory;
         _calculator = calculator;
         _db = db;
         _logger = logger;
     }
 
-    public async Task<ImportResult> ImportStatementAsync(Stream fileStream)
+    public async Task<ImportResult> ImportStatementAsync(Stream fileStream, string fileName)
     {
         using var reader = new StreamReader(fileStream);
         var content = await reader.ReadToEndAsync();
 
         _logger.LogInformation("Parsing statement ({Length} chars)", content.Length);
-        var parsed = _parser.Parse(content);
+        var parser = _parserFactory.GetParser(fileName);
+        var parsed = parser.Parse(content);
         _logger.LogInformation("Parsed {Trades} trades, {Dividends} dividends, {Taxes} withholding taxes",
             parsed.Trades.Count, parsed.Dividends.Count, parsed.WithholdingTaxes.Count);
 

@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Pitly.Core.Models;
 using Pitly.Core.Services;
 
@@ -10,11 +15,11 @@ public interface ICapitalGainsTaxCalculator
 
 public class CapitalGainsTaxCalculator : ICapitalGainsTaxCalculator
 {
-    private readonly INbpExchangeRateService _rateService;
+    private readonly ICurrencyExchangeService _exchangeRateService;
 
-    public CapitalGainsTaxCalculator(INbpExchangeRateService rateService)
+    public CapitalGainsTaxCalculator(ICurrencyExchangeService exchangeRateService)
     {
-        _rateService = rateService;
+        _exchangeRateService = exchangeRateService;
     }
 
     public async Task<List<TradeResult>> CalculateAsync(List<Trade> trades)
@@ -26,7 +31,7 @@ public class CapitalGainsTaxCalculator : ICapitalGainsTaxCalculator
 
         foreach (var trade in sorted)
         {
-            var rate = await _rateService.GetRateAsync(trade.Currency, trade.DateTime);
+            var rate = await _exchangeRateService.GetRateAsync(trade.Currency, trade.DateTime);
 
             if (!buyLots.ContainsKey(trade.Symbol))
                 buyLots[trade.Symbol] = new LinkedList<(decimal, decimal, decimal)>();

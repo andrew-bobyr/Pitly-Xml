@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Pitly.Core.Models;
 using Pitly.Core.Services;
 
@@ -10,11 +15,11 @@ public interface IDividendTaxCalculator
 
 public class DividendTaxCalculator : IDividendTaxCalculator
 {
-    private readonly INbpExchangeRateService _rateService;
+    private readonly ICurrencyExchangeService _exchangeRateService;
 
-    public DividendTaxCalculator(INbpExchangeRateService rateService)
+    public DividendTaxCalculator(ICurrencyExchangeService exchangeRateService)
     {
-        _rateService = rateService;
+        _exchangeRateService = exchangeRateService;
     }
 
     public async Task<List<Dividend>> CalculateAsync(
@@ -25,12 +30,14 @@ public class DividendTaxCalculator : IDividendTaxCalculator
 
         foreach (var div in rawDividends)
         {
-            var matchingTax = rawWithholdingTaxes
-                .FirstOrDefault(t => t.Symbol == div.Symbol && t.Date == div.Date);
+            // Sum ALL matching withholding tax entries for the same symbol and date.
+            // IB often issues corrections: original charge (-$0.37), reversal (+$0.37),
+            // and corrected charge (-$0.18). Summing gives the net tax paid.
+            var withholdingAmount = Math.Abs(rawWithholdingTaxes
+                .Where(t => t.Symbol == div.Symbol && t.Date == div.Date)
+                .Sum(t => t.Amount));
 
-            var withholdingAmount = matchingTax?.Amount ?? 0;
-
-            var rate = await _rateService.GetRateAsync(div.Currency, div.Date);
+            var rate = await _exchangeRateService.GetRateAsync(div.Currency, div.Date);
 
             var amountPln = div.Amount * rate;
             var withholdingPln = withholdingAmount * rate;

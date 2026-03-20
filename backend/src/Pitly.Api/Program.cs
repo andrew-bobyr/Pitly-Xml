@@ -19,12 +19,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddHttpClient("Nbp");
-builder.Services.AddScoped<INbpExchangeRateService>(sp =>
-    new NbpExchangeRateService(
+builder.Services.AddScoped<ICurrencyExchangeService>(sp =>
+    new CurrencyExchangeService(
         sp.GetRequiredService<IHttpClientFactory>().CreateClient("Nbp"),
-        sp.GetRequiredService<ILogger<NbpExchangeRateService>>()));
+        sp.GetRequiredService<ILogger<CurrencyExchangeService>>()));
 
-builder.Services.AddScoped<IStatementParser, InteractiveBrokersStatementParser>();
+builder.Services.AddScoped<InteractiveBrokersStatementParser>();
+builder.Services.AddScoped<InteractiveBrokersXmlStatementParser>();
+builder.Services.AddScoped<IStatementParserFactory, StatementParserFactory>();
 builder.Services.AddScoped<ICapitalGainsTaxCalculator, CapitalGainsTaxCalculator>();
 builder.Services.AddScoped<IDividendTaxCalculator, DividendTaxCalculator>();
 builder.Services.AddScoped<ITaxCalculator, TaxCalculator>();

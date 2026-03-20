@@ -9,7 +9,8 @@ public record Trade(
     decimal Proceeds,
     decimal Commission,
     decimal RealizedPnL,
-    TradeType Type);
+    TradeType Type,
+    string Description = "");
 
 public enum TradeType { Buy, Sell }
 
@@ -26,4 +27,5 @@ public record TradeResult(
     decimal ProceedsPln,
     decimal CostPln,
     decimal GainLossPln,
-    bool RateUnavailable = false);
+    bool RateUnavailable = false,
+    string Description = "");

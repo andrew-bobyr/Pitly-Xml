@@ -19,8 +19,8 @@ export default function ImportPage({ onComplete }: { onComplete: (data: AppState
   const [dragOver, setDragOver] = useState(false);
 
   const processFile = useCallback(async (file: File) => {
-    if (!file.name.endsWith('.csv')) {
-      setError('Please upload a CSV file.');
+    if (!file.name.endsWith('.csv') && !file.name.endsWith('.xml')) {
+      setError('Please upload a CSV or XML file.');
       return;
     }
     setError('');
@@ -82,9 +82,9 @@ export default function ImportPage({ onComplete }: { onComplete: (data: AppState
             }`}
           >
             <Upload className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-            <p className="text-slate-300 font-medium mb-1">Drag & drop your CSV file here</p>
+            <p className="text-slate-300 font-medium mb-1">Drag & drop your CSV or XML file here</p>
             <p className="text-slate-500 text-sm">or click to browse</p>
-            <input type="file" accept=".csv" className="hidden" onChange={handleFileInput} />
+            <input type="file" accept=".csv,.xml" className="hidden" onChange={handleFileInput} />
           </label>
 
           {error && (
@@ -106,7 +106,7 @@ export default function ImportPage({ onComplete }: { onComplete: (data: AppState
               <div className="px-6 pb-5 text-slate-400 text-sm space-y-2">
                 <p>1. Log in to IB Client Portal</p>
                 <p>2. Go to <strong className="text-slate-300">Reports &rarr; Statements &rarr; Activity</strong></p>
-                <p>3. Select period (full year), format: <strong className="text-slate-300">CSV</strong></p>
+                <p>3. Select period (full year), format: <strong className="text-slate-300">CSV or XML</strong></p>
                 <p>4. Download and upload here</p>
               </div>
             )}

@@ -23,7 +23,7 @@ public static class ImportEndpoints
 
             try
             {
-                var result = await importService.ImportStatementAsync(file.OpenReadStream());
+                var result = await importService.ImportStatementAsync(file.OpenReadStream(), file.FileName);
 
                 return Results.Ok(new
                 {
