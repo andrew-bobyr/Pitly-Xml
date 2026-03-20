@@ -37,6 +37,10 @@ public class TaxCalculator : ITaxCalculator
 
         var totalDividendsPln = dividends.Sum(d => d.AmountPln);
         var totalWithholdingPln = dividends.Sum(d => d.WithholdingTaxPln);
+        // PIT-38 uses total-based calculation for Poz. 45-47:
+        // Poz. 46 = Min(total withholding, total 19% tax)
+        // Poz. 47 = Poz. 45 - Poz. 46
+        // Dashboard value matches PIT-38 for consistency.
         var polishDividendTax = Math.Round(totalDividendsPln * TaxConstants.TaxRate, 2);
         var withholdingCredit = Math.Min(totalWithholdingPln, polishDividendTax);
         var dividendTaxOwed = Math.Max(polishDividendTax - withholdingCredit, 0);

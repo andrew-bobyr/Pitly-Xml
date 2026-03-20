@@ -59,7 +59,10 @@ public record Pit38Fields(
         // Poz. 45/47 fall under art. 30a ust. 1 — per art. 63 § 1a Ordynacji podatkowej
         // (footnote 5 on PIT-38(17)), amounts are rounded to full groszy upward, not full PLN.
         var zryczaltowanyPodatek = RoundToGroszUp(summary.TotalDividendsPln * TaxConstants.TaxRate);
+        // Poz. 46: Total foreign tax paid (capped at poz. 45 per art. 30a ust. 9).
+        // PIT-38 form uses total amounts, not per-dividend capping.
         var podatekZaGranica = Math.Round(Math.Min(summary.TotalWithholdingPln, zryczaltowanyPodatek), 2);
+
         var roznica = RoundToGroszUp(Math.Max(zryczaltowanyPodatek - podatekZaGranica, 0));
 
         var podatekDoZaplaty = podatekNalezny + roznica;

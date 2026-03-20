@@ -15,14 +15,15 @@ export default function DividendsPage({ state }: { state: AppState }) {
   }, [state.dividends, symbolFilter]);
 
   const totals = useMemo(() => {
-    let amountPln = 0, withholdingPln = 0, plTax = 0, netOwed = 0;
+    let amountPln = 0, withholdingPln = 0, plTax = 0;
     for (const d of filtered) {
       const tax = d.amountPln * PL_TAX_RATE;
       amountPln += d.amountPln;
       withholdingPln += d.withholdingTaxPln;
       plTax += tax;
-      netOwed += Math.max(tax - d.withholdingTaxPln, 0);
     }
+    // Total Net Owed = difference of totals (matches PIT-38 Poz. 47 = Poz. 45 − Poz. 46)
+    const netOwed = Math.max(plTax - withholdingPln, 0);
     return { amountPln, withholdingPln, plTax, netOwed };
   }, [filtered]);
 
@@ -64,6 +65,7 @@ export default function DividendsPage({ state }: { state: AppState }) {
                 <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-left">Date</th>
                 <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-left">Symbol</th>
                 <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-right">Amount (USD)</th>
+                <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-right">US Tax (USD)</th>
                 <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-right">Rate</th>
                 <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-right">Amount (PLN)</th>
                 <th className="text-slate-400 text-xs uppercase tracking-wider font-medium px-3 py-3 text-right">US Tax (PLN)</th>
@@ -74,7 +76,7 @@ export default function DividendsPage({ state }: { state: AppState }) {
             <tbody>
               {filtered.map((d, i) => {
                 const plTax = d.amountPln * PL_TAX_RATE;
-                const netOwed = Math.max(plTax - d.withholdingTaxPln, 0);
+                const netOwed = plTax - d.withholdingTaxPln;
                 return (
                   <tr
                     key={i}
@@ -83,18 +85,22 @@ export default function DividendsPage({ state }: { state: AppState }) {
                     <td className="px-3 py-2.5 text-slate-300 whitespace-nowrap">{formatDate(d.date)}</td>
                     <td className="px-3 py-2.5 text-white font-medium">{d.symbol}</td>
                     <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">{formatUsd(d.amountOriginal)}</td>
+                    <td className="px-3 py-2.5 text-right font-mono tabular-nums text-red-400">
+                      {formatUsd(d.withholdingTaxOriginal)}
+                      {d.amountOriginal > 0 && <span className="text-red-400/60 ml-1">({Math.round(d.withholdingTaxOriginal / d.amountOriginal * 100)}%)</span>}
+                    </td>
                     <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-400">{formatRate(d.exchangeRate)}</td>
                     <td className="px-3 py-2.5 text-right font-mono tabular-nums text-blue-400">{formatPln(d.amountPln)}</td>
                     <td className="px-3 py-2.5 text-right font-mono tabular-nums text-red-400">{formatPln(d.withholdingTaxPln)}</td>
                     <td className="px-3 py-2.5 text-right font-mono tabular-nums text-slate-300">{formatPln(plTax)}</td>
-                    <td className="px-3 py-2.5 text-right font-mono tabular-nums text-amber-400">{formatPln(netOwed)}</td>
+                    <td className={`px-3 py-2.5 text-right font-mono tabular-nums ${netOwed < 0 ? 'text-green-400' : 'text-amber-400'}`}>{formatPln(netOwed)}</td>
                   </tr>
                 );
               })}
             </tbody>
             <tfoot>
               <tr className="border-t border-slate-600 bg-slate-800/80">
-                <td colSpan={4} className="px-3 py-3 text-slate-300 font-medium text-sm">Totals</td>
+                <td colSpan={5} className="px-3 py-3 text-slate-300 font-medium text-sm">Totals</td>
                 <td className="px-3 py-3 text-right font-mono tabular-nums text-blue-400 text-sm">{formatPln(totals.amountPln)}</td>
                 <td className="px-3 py-3 text-right font-mono tabular-nums text-red-400 text-sm">{formatPln(totals.withholdingPln)}</td>
                 <td className="px-3 py-3 text-right font-mono tabular-nums text-slate-300 text-sm">{formatPln(totals.plTax)}</td>
