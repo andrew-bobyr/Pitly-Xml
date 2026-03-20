@@ -21,7 +21,7 @@
 
 If you invest through **Interactive Brokers** from Poland, every year by **April 30** you must file a **PIT-38** tax declaration. This means manually converting dozens (or hundreds) of transactions to PLN using the correct NBP exchange rate, calculating capital gains with FIFO, figuring out dividend tax with foreign withholding credits, and filling in the right fields on the form. Doing this by hand is tedious, time-consuming, and error-prone.
 
-**Pitly automates the entire process.** Upload your IB Activity Statement CSV and get the exact values to enter in your PIT-38 — in seconds, not hours.
+**Pitly automates the entire process.** Upload your IB Activity Statement XML and get the exact values to enter in your PIT-38 — in seconds, not hours.
 
 > Currently only **Interactive Brokers** is supported. More brokers may be added in the future.
 
@@ -38,7 +38,7 @@ If you invest through **Interactive Brokers** from Poland, every year by **April
 
 ## Screenshots
 
-**Import** — drag & drop your CSV
+**Import** — drag & drop your XML
 
 ![Import page](docs/screenshots/01-import.png)
 
@@ -111,7 +111,7 @@ A sample statement is provided at [`samples/sample-activity-statement.csv`](samp
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/api/import` | Upload CSV, returns session ID + results |
+| POST | `/api/import` | Upload XML, returns session ID + results |
 | GET | `/api/session/{id}/trades` | Paginated trades (sortable, filterable) |
 | GET | `/api/session/{id}/dividends` | All dividends for session |
 | GET | `/api/session/{id}/summary` | Tax summary totals |
